@@ -2,15 +2,13 @@ package model;
 
 import paymentReseiver.PaymentReseiver;
 
-public class CoinAcceptor implements PaymentReseiver {
+import java.util.Scanner;
+
+public class BankCard implements PaymentReseiver {
     private int amount;
 
-    public CoinAcceptor(int initial) {
-        this.amount = initial;
-    }
-
-    public void setAmount(int amount){
-        this.amount=amount;
+    public BankCard() {
+        this.amount = 0;
     }
 
 
