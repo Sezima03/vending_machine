@@ -1,5 +1,6 @@
 import enums.ActionLetter;
 import model.*;
+import paymentReseiver.PaymentReseiver;
 import util.UniversalArray;
 import util.UniversalArrayImpl;
 
@@ -12,6 +13,7 @@ public class AppRunner {
     private final CoinAcceptor coinAcceptor;
 
     private static boolean isExit = false;
+    private PaymentReseiver paymentReseiver;
 
     private AppRunner() {
         products.addAll(new Product[]{
@@ -23,6 +25,7 @@ public class AppRunner {
                 new Pistachios(ActionLetter.G, 130)
         });
         coinAcceptor = new CoinAcceptor(100);
+
     }
 
     public static void run() {
@@ -33,10 +36,40 @@ public class AppRunner {
     }
 
     private void startSimulation() {
+        print("Выберите тип платежного приемника: ");
+        print("1-монетоприемник");
+        print("2-Карта");
+
+        String choice=fromConsole().trim();
+        if ("1".equals(choice)){
+            paymentReseiver=new CoinAcceptor(0);
+            print("вы выбрали монетоприемник");
+        } else if ("2".equals(choice)) {
+            paymentReseiver=new BankCard();
+            print("Вы выбрали картоприемник");
+        }else {
+            print("Недопустимый выбор");
+            return;
+        }
+
+        Machine machine=new Machine(paymentReseiver);
+        if (paymentReseiver instanceof CoinAcceptor) {
+            print("Введите сумму монет для оплаты:");
+        } else if (paymentReseiver instanceof BankCard) {
+            print("Введите номер карты для оплаты:");
+        }
+        String inputAmount = fromConsole().trim();
+        try {
+            int amount = Integer.parseInt(inputAmount);
+            machine.prosessPay(amount);
+            print("Сумма в платёжном приёмнике: " + machine.getPay());
+        } catch (NumberFormatException e) {
+            print("Неверный ввод. Введите число.");
+        }
         print("В автомате доступны:");
         showProducts(products);
 
-        print("Монет на сумму: " + coinAcceptor.getAmount());
+
 
         UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         allowProducts.addAll(getAllowedProducts().toArray());
